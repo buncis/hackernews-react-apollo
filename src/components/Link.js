@@ -46,7 +46,7 @@ class Link extends Component {
             </Mutation>
           )}
         </div>
-        <div classname="ml1">
+        <div className="ml1">
           <div>
             {this.props.link.description} ({this.props.link.url}))
           </div>
