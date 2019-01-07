@@ -1,7 +1,33 @@
 import React, { Component } from "react";
 import { withApollo } from "react-apollo";
+// That’s the purpose of the withApollo function.
+// This function injects the ApolloClient instance that you created in index.js
+// into the Search component as a new prop called client.
 import gql from "graphql-tag";
 import Link from "./Link";
+
+const FEED_SEARCH_QUERY = gql`
+  query FeedSearchQuery($filter: String!) {
+    feed(filter: $filter) {
+      links {
+        id
+        url
+        description
+        createdAt
+        postedBy {
+          id
+          name
+        }
+        votes {
+          id
+          user {
+            id
+          }
+        }
+      }
+    }
+  }
+`;
 
 class Search extends Component {
   state = {
@@ -27,7 +53,18 @@ class Search extends Component {
     );
   }
 
-  _executeSearch = async () => {};
+  _executeSearch = async () => {
+    const { filter } = this.state;
+    const result = await this.props.client.query({
+      query: FEED_SEARCH_QUERY,
+      variables: { filter }
+    });
+    const links = result.data.feed.links;
+    this.setState({ links });
+  };
 }
 
+// That’s the purpose of the withApollo function.
+// This function injects the ApolloClient instance that you created in index.js
+// into the Search component as a new prop called client.
 export default withApollo(Search);
