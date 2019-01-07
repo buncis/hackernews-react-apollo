@@ -43,13 +43,14 @@ class Login extends Component {
           )}
           <input
             value={email}
-            onChange={e => this.setState({ name: e.target.value })}
+            onChange={e => this.setState({ email: e.target.value })}
             type="text"
             placeholder="Your email address"
           />
           <input
             value={password}
-            onChange={e => this.setState({ name: e.target.value })}
+            onChange={e => this.setState({ password: e.target.value })}
+            type="password"
             placeholder="Choose a safe password"
           />
         </div>
