@@ -10,9 +10,12 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import { BrowserRouter } from "react-router-dom";
 import { setContext } from "apollo-link-context";
 import { AUTH_TOKEN } from "./constants";
-import { split } from "apollo-link";
+import { split, ApolloLink } from "apollo-link";
 import { WebSocketLink } from "apollo-link-ws";
 import { getMainDefinition } from "apollo-utilities";
+import { withClientState } from "apollo-link-state";
+
+const cache = new InMemoryCache();
 
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem(AUTH_TOKEN);
@@ -22,6 +25,30 @@ const authLink = setContext((_, { headers }) => {
       authorization: token ? `Bearer ${token}` : ""
     }
   };
+});
+
+const stateLink = withClientState({
+  cache,
+  resolvers: {
+    Mutation: {
+      updateNetworkStatus: (_, { isConnected }, { cache }) => {
+        const data = {
+          networkStatus: {
+            __typename: "NetworkStatus",
+            isConnected
+          }
+        };
+        cache.writeData({ data });
+        return null;
+      }
+    }
+  },
+  defaults: {
+    networkStatus: {
+      __typename: "NetworkStatus",
+      isConnected: true
+    }
+  }
 });
 
 const httpLink = createHttpLink({
@@ -48,8 +75,8 @@ const link = split(
 );
 
 const client = new ApolloClient({
-  link,
-  cache: new InMemoryCache()
+  link: ApolloLink.from([stateLink, link]),
+  cache: cache
 });
 
 ReactDOM.render(
