@@ -19,6 +19,12 @@ const LOGIN_MUTATION = gql`
   }
 `;
 
+const UPDATE_LOGIN_STATUS = gql`
+  mutation updateLoginStatus($isLoggedIn: Boolean) {
+    updateLoginStatus(isLoggedIn: $isLoggedIn) @client
+  }
+`;
+
 class Login extends Component {
   state = {
     login: true,
@@ -56,14 +62,24 @@ class Login extends Component {
         </div>
         <div className="flex mt3">
           <Mutation
-            mutation={login ? LOGIN_MUTATION : SIGNUP_MUTATION}
-            variables={{ email, password, name }}
-            onCompleted={data => this._confirm(data)}
+            mutation={UPDATE_LOGIN_STATUS}
+            variables={{ isLoggedIn: true, __typename: "LoginStatus" }}
           >
             {mutation => (
-              <div className="pointer mr2 button" onClick={mutation}>
-                {login ? "login" : "create account"}
-              </div>
+              <Mutation
+                mutation={login ? LOGIN_MUTATION : SIGNUP_MUTATION}
+                variables={{ email, password, name }}
+                onCompleted={data => {
+                  mutation();
+                  this._confirm(data);
+                }}
+              >
+                {mutation => (
+                  <div className="pointer mr2 button" onClick={mutation}>
+                    {login ? "login" : "create account"}
+                  </div>
+                )}
+              </Mutation>
             )}
           </Mutation>
           <div

@@ -31,11 +31,11 @@ const stateLink = withClientState({
   cache,
   resolvers: {
     Mutation: {
-      updateNetworkStatus: (_, { isConnected }, { cache }) => {
+      updateLoginStatus: (_, { isLoggedIn }, { cache }) => {
         const data = {
-          networkStatus: {
-            __typename: "NetworkStatus",
-            isConnected
+          loginStatus: {
+            __typename: "LoginStatus",
+            isLoggedIn
           }
         };
         cache.writeData({ data });
