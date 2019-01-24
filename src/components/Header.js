@@ -5,10 +5,10 @@ import { AUTH_TOKEN } from "../constants";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
 
-const NETWORK_STATUS = gql`
-  query NetworkStatus {
-    networkStatus {
-      isConnected
+const LOGIN_STATUS = gql`
+  query LoginStatus {
+    loginStatus @client {
+      isLoggedIn
     }
   }
 `;
@@ -18,9 +18,9 @@ class Header extends Component {
     const authToken = localStorage.getItem(AUTH_TOKEN);
 
     return (
-      <Query query={NETWORK_STATUS}>
+      <Query query={LOGIN_STATUS}>
         {({ data }) => {
-          const { isConnected } = data.networkStatus;
+          const { isLoggedIn } = data.loginStatus;
           return (
             <div className="flex pa1 justify-between nowrap orange">
               <div className="flex flex-fixed black">
@@ -46,7 +46,7 @@ class Header extends Component {
                 )}
                 <div className="ml1">|</div>
                 <div className="ml1 no-underline black">
-                  {isConnected ? "Online Mode" : "Offline Mode"}
+                  {isLoggedIn ? "User Login" : "User not Login"}
                 </div>
               </div>
               <div className="flex flex-fixed">

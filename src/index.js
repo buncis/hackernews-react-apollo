@@ -44,9 +44,9 @@ const stateLink = withClientState({
     }
   },
   defaults: {
-    networkStatus: {
-      __typename: "NetworkStatus",
-      isConnected: true
+    loginStatus: {
+      __typename: "LoginStatus",
+      isLoggedIn: false
     }
   }
 });
